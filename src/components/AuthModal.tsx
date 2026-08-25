@@ -4,7 +4,6 @@ import {
   LogIn, 
   Sparkles, 
   X, 
-  UploadCloud, 
   CheckCircle2, 
   ArrowRight, 
   Lock, 
@@ -12,8 +11,6 @@ import {
   User, 
   Briefcase, 
   Play,
-  FileText,
-  Loader2,
   Linkedin,
   Github,
   Award,
@@ -22,7 +19,6 @@ import {
 } from 'lucide-react';
 import { UserProfile, ExperienceLevel, AvailabilityStatus, Skill, PastProject } from '../types';
 import { SEED_CANDIDATES } from '../data/mockData';
-import { parseResumeFile, ParsedResumeResult } from '../utils/resumeParser';
 import { ThemeToggle } from './ThemeToggle';
 
 interface AuthModalProps {
@@ -71,21 +67,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [regExp, setRegExp] = useState<ExperienceLevel>('Intermediate');
   const [regAvailability, setRegAvailability] = useState<AvailabilityStatus>('available');
   const [regAvatar, setRegAvatar] = useState(DEFAULT_AVATARS[0]);
-  const [regSkills, setRegSkills] = useState<string[]>([]);
+  const [regSkills, setRegSkills] = useState<string[]>(['TypeScript', 'React', 'Node.js', 'PostgreSQL']);
   const [customSkillInput, setCustomSkillInput] = useState('');
   const [regLinkedin, setRegLinkedin] = useState('');
   const [regGithub, setRegGithub] = useState('');
   const [regPortfolio, setRegPortfolio] = useState('');
   const [regPastProjects, setRegPastProjects] = useState<PastProject[]>([]);
   const [regInterests, setRegInterests] = useState<string[]>(['AI & Machine Learning', 'Developer Tools']);
-
-  // Resume Parsing State
-  const [resumeFileName, setResumeFileName] = useState('');
-  const [isParsingResume, setIsParsingResume] = useState(false);
-  const [extractedSummary, setExtractedSummary] = useState<string | null>(null);
-  const [extractionSource, setExtractionSource] = useState<string>('');
-  const [showRawTextInput, setShowRawTextInput] = useState(false);
-  const [rawResumeText, setRawResumeText] = useState('');
 
   // Login Form State
   const [loginEmail, setLoginEmail] = useState('');
@@ -96,73 +84,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [selectedDemoUser, setSelectedDemoUser] = useState<UserProfile>(SEED_CANDIDATES[0]);
 
   if (!isOpen) return null;
-
-  // Apply parsed resume data to the state
-  const applyParsedData = (parsed: ParsedResumeResult) => {
-    if (parsed.name) setRegName(parsed.name);
-    if (parsed.email) setRegEmail(parsed.email);
-    if (parsed.primaryRole) setRegPrimaryRole(parsed.primaryRole);
-    if (parsed.headline) setRegHeadline(parsed.headline);
-    if (parsed.bio) setRegBio(parsed.bio);
-    if (parsed.location) setRegLocation(parsed.location);
-    if (parsed.experienceLevel) setRegExp(parsed.experienceLevel);
-    if (parsed.hoursPerWeek) setRegHours(parsed.hoursPerWeek);
-    if (parsed.linkedinUrl) setRegLinkedin(parsed.linkedinUrl);
-    if (parsed.githubUrl) setRegGithub(parsed.githubUrl);
-    if (parsed.portfolioUrl) setRegPortfolio(parsed.portfolioUrl);
-    
-    if (Array.isArray(parsed.skills) && parsed.skills.length > 0) {
-      setRegSkills(parsed.skills.map((s) => s.name));
-    }
-    if (Array.isArray(parsed.interests) && parsed.interests.length > 0) {
-      setRegInterests(parsed.interests);
-    }
-    if (Array.isArray(parsed.pastProjects) && parsed.pastProjects.length > 0) {
-      setRegPastProjects(parsed.pastProjects);
-    }
-
-    setResumeFileName(parsed.fileName || 'resume.pdf');
-    setExtractedSummary(parsed.extractionSummary || `Extracted profile for ${parsed.name} with ${parsed.skills?.length || 0} skills.`);
-    setExtractionSource(parsed.source === 'gemini-ai' ? 'Gemini 3.7 Flash AI' : 'Smart Heuristics');
-  };
-
-  // Real Resume Upload Handling via Backend API & Gemini AI
-  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setResumeFileName(file.name);
-    setIsParsingResume(true);
-    setExtractedSummary(null);
-
-    try {
-      const parsed = await parseResumeFile(file);
-      applyParsedData(parsed);
-    } catch (err: any) {
-      console.warn('Resume processing notice:', err?.message || err);
-      setExtractedSummary(`Parsed file ${file.name}. Please review and complete your details.`);
-    } finally {
-      setIsParsingResume(false);
-    }
-  };
-
-  // Handle Raw Text Resume Parsing
-  const handleParseRawText = async () => {
-    if (!rawResumeText.trim()) return;
-    setIsParsingResume(true);
-    setExtractedSummary(null);
-
-    try {
-      const dummyFile = new File([rawResumeText], 'pasted_resume.txt', { type: 'text/plain' });
-      const parsed = await parseResumeFile(dummyFile);
-      applyParsedData(parsed);
-      setShowRawTextInput(false);
-    } catch (err: any) {
-      console.warn('Text resume processing notice:', err?.message || err);
-    } finally {
-      setIsParsingResume(false);
-    }
-  };
 
   const handleAddSkill = (skill: string) => {
     if (!skill.trim()) return;
@@ -212,8 +133,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       skills: formattedSkills,
       interests: regInterests.length > 0 ? regInterests : ['AI & Machine Learning', 'Developer Tools'],
       pastProjects: regPastProjects,
-      resumeParsed: !!resumeFileName,
-      resumeFileName: resumeFileName || undefined,
       joinedDate: 'Joined Today',
     };
 
@@ -310,152 +229,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {activeTab === 'register' && (
             <form onSubmit={handleRegisterSubmit} className="space-y-6">
               
-              {/* PRIMARY RESUME EXTRACTION CALLOUT */}
-              <div className="p-5 rounded-2xl bg-gradient-to-b from-[#14b8a6]/10 to-transparent border border-[#14b8a6]/30 shadow-lg space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-[#14b8a6]/20 border border-[#14b8a6]/40 flex items-center justify-center text-[#14b8a6] shrink-0 mt-0.5">
-                      {isParsingResume ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                      ) : (
-                        <UploadCloud className="w-5 h-5" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-display text-sm font-bold text-white">
-                          Extract All Details From Resume First
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#14b8a6]/20 text-[#14b8a6] text-[10px] font-bold">
-                          AI Powered
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/50 mt-0.5">
-                        Upload your PDF, DOCX, or TXT. We extract your exact Name, Role, Skills, Bio, Experience Tier, and Projects directly from your resume.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <input
-                      type="file"
-                      id="reg-resume-file"
-                      accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
-                      onChange={handleResumeUpload}
-                      disabled={isParsingResume}
-                      className="hidden"
-                    />
-                    
-                    <label
-                      htmlFor={isParsingResume ? undefined : "reg-resume-file"}
-                      className={`px-4 py-2 rounded-full bg-gradient-to-r from-[#6366f1] to-[#14b8a6] hover:brightness-110 text-white text-xs font-bold shadow-md transition-all active:scale-95 flex items-center gap-1.5 ${isParsingResume ? 'opacity-70 cursor-wait' : 'cursor-pointer'}`}
-                    >
-                      {isParsingResume ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <FileText className="w-3.5 h-3.5" />
-                      )}
-                      <span>{isParsingResume ? 'Fast Extracting...' : resumeFileName ? `Re-upload Resume` : 'Upload Resume PDF'}</span>
-                    </label>
-
-                    <button
-                      type="button"
-                      disabled={isParsingResume}
-                      onClick={() => setShowRawTextInput(!showRawTextInput)}
-                      className="px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white text-xs font-medium cursor-pointer transition-colors disabled:opacity-40"
-                    >
-                      Paste Text
-                    </button>
-                  </div>
+              {/* Profile Details Header */}
+              <div className="flex items-center justify-between pb-1 border-b border-white/5">
+                <div>
+                  <h4 className="text-sm font-bold text-white">Create Candidate Profile</h4>
+                  <p className="text-xs text-white/50">Enter your details to generate match scores with all active hackathons & builders</p>
                 </div>
-
-                {/* Parsing Status Indicator */}
-                {isParsingResume && (
-                  <div className="p-3 rounded-xl bg-[#6366f1]/10 border border-[#6366f1]/30 flex items-center justify-between text-xs animate-in fade-in">
-                    <div className="flex items-center gap-2 text-white/90">
-                      <Loader2 className="w-4 h-4 animate-spin text-[#14b8a6]" />
-                      <span>Reading document & extracting candidate intelligence with Gemini Flash AI...</span>
-                    </div>
-                    <span className="text-[11px] font-semibold text-[#14b8a6] px-2 py-0.5 rounded-full bg-[#14b8a6]/20">
-                      ~1-2s
-                    </span>
-                  </div>
-                )}
-
-                {/* Paste Raw Text Expansion */}
-                {showRawTextInput && (
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-2 animate-in fade-in">
-                    <label className="text-[11px] font-semibold text-white/70 block">
-                      Paste Resume / CV Plain Text:
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={rawResumeText}
-                      onChange={(e) => setRawResumeText(e.target.value)}
-                      placeholder="Paste the text from your resume here (e.g. John Doe, Full-Stack Engineer, Skills: React, Python, PostgreSQL, Experience...)"
-                      className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs placeholder-white/20 focus:outline-none focus:border-[#14b8a6]"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setShowRawTextInput(false)}
-                        className="px-3 py-1 text-[11px] text-white/40 hover:text-white"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleParseRawText}
-                        disabled={!rawResumeText.trim() || isParsingResume}
-                        className="px-4 py-1.5 rounded-full bg-[#14b8a6] text-black text-xs font-bold hover:brightness-110 transition-all cursor-pointer disabled:opacity-50"
-                      >
-                        {isParsingResume ? 'Extracting...' : 'Parse Text Resume'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Extraction Success & Summary Banner */}
-                {extractedSummary && (
-                  <div className="p-3.5 rounded-xl bg-[#14b8a6]/10 border border-[#14b8a6]/30 space-y-2 animate-in fade-in">
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 text-[#14b8a6] font-bold">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Resume Intelligence Extracted ({extractionSource || 'Gemini AI'})</span>
-                      </div>
-                      <span className="text-[11px] text-white/40">{resumeFileName}</span>
-                    </div>
-                    <p className="text-xs text-white/80 leading-relaxed">
-                      {extractedSummary}
-                    </p>
-                    {regSkills.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        <span className="text-[10px] text-[#14b8a6] font-semibold self-center mr-1">Extracted Skills:</span>
-                        {regSkills.slice(0, 8).map((sk) => (
-                          <span key={sk} className="px-2 py-0.5 rounded-full bg-[#14b8a6]/20 text-[#14b8a6] text-[10px] font-medium border border-[#14b8a6]/30">
-                            {sk}
-                          </span>
-                        ))}
-                        {regSkills.length > 8 && (
-                          <span className="text-[10px] text-white/40 self-center">+{regSkills.length - 8} more</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="flex items-center gap-1.5 text-xs text-[#14b8a6]">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="font-semibold">Instant Compatibility</span>
+                </div>
               </div>
 
-              {/* SECTION: EXTRACTED / EDITABLE PROFILE FIELDS */}
-              <div className="space-y-4 pt-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white/60 uppercase tracking-wider">
-                    Candidate Profile Details (Review & Edit)
-                  </span>
-                  <span className="text-[11px] text-white/40">
-                    Auto-populated from resume or fill manually
-                  </span>
-                </div>
-
+              {/* SECTION: EDITABLE PROFILE FIELDS */}
+              <div className="space-y-4 pt-1">
                 {/* Name & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -467,7 +254,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       <input
                         type="text"
                         required
-                        placeholder="e.g. John Doe (extracted from resume)"
+                        placeholder="e.g. Alex Rivera"
                         value={regName}
                         onChange={(e) => setRegName(e.target.value)}
                         className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs placeholder-white/20 focus:outline-none focus:border-[#14b8a6]"
@@ -484,7 +271,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       <input
                         type="email"
                         required
-                        placeholder="e.g. john.doe@example.com"
+                        placeholder="e.g. alex.rivera@example.com"
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
                         className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs placeholder-white/20 focus:outline-none focus:border-[#14b8a6]"
@@ -552,7 +339,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </label>
                   <textarea
                     rows={3}
-                    placeholder="Brief background distilled from your resume or experience..."
+                    placeholder="Brief background about your experience and what projects you want to build..."
                     value={regBio}
                     onChange={(e) => setRegBio(e.target.value)}
                     className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs placeholder-white/20 focus:outline-none focus:border-[#14b8a6] leading-relaxed"
@@ -663,7 +450,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     </div>
                   ) : (
                     <p className="text-xs text-white/30 italic">
-                      No skills added yet. Upload your resume above to extract all skills automatically.
+                      No skills selected yet. Select or type skills below.
                     </p>
                   )}
 

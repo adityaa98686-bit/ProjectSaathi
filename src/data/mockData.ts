@@ -18,8 +18,6 @@ export const INITIAL_CURRENT_USER: UserProfile = {
   githubUrl: 'https://github.com/aaravmehta',
   portfolioUrl: 'https://aarav.dev',
   joinedDate: 'Joined March 2026',
-  resumeParsed: true,
-  resumeFileName: 'Aarav_Mehta_Resume_2026.pdf',
   skills: [
     { name: 'TypeScript', category: 'technical', level: 'expert' },
     { name: 'React', category: 'technical', level: 'expert' },
@@ -72,8 +70,6 @@ export const SEED_CANDIDATES: UserProfile[] = [
     githubUrl: 'https://github.com/priyadesign',
     portfolioUrl: 'https://priyaux.design',
     joinedDate: 'Joined January 2026',
-    resumeParsed: true,
-    resumeFileName: 'Priya_Sharma_ProductDesign.pdf',
     skills: [
       { name: 'Figma', category: 'design', level: 'expert' },
       { name: 'Design Systems', category: 'design', level: 'expert' },
@@ -111,7 +107,6 @@ export const SEED_CANDIDATES: UserProfile[] = [
     isLinkedinVerified: true,
     githubUrl: 'https://github.com/devraman',
     joinedDate: 'Joined February 2026',
-    resumeParsed: true,
     skills: [
       { name: 'Python', category: 'technical', level: 'expert' },
       { name: 'PyTorch', category: 'technical', level: 'expert' },
@@ -147,7 +142,6 @@ export const SEED_CANDIDATES: UserProfile[] = [
     linkedinUrl: 'https://linkedin.com/in/sarachen-growth',
     isLinkedinVerified: true,
     joinedDate: 'Joined April 2026',
-    resumeParsed: true,
     skills: [
       { name: 'Product Strategy', category: 'domain', level: 'expert' },
       { name: 'Agile & Scrum', category: 'soft', level: 'expert' },
@@ -183,7 +177,6 @@ export const SEED_CANDIDATES: UserProfile[] = [
     isLinkedinVerified: true,
     githubUrl: 'https://github.com/kavyanair',
     joinedDate: 'Joined December 2025',
-    resumeParsed: true,
     skills: [
       { name: 'Go', category: 'technical', level: 'expert' },
       { name: 'Rust', category: 'technical', level: 'proficient' },

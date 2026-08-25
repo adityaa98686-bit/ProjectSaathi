@@ -1,10 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   X, 
-  UploadCloud, 
-  FileText, 
   Sparkles, 
-  CheckCircle2, 
   ShieldCheck, 
   Plus, 
   Trash2, 
@@ -15,7 +12,6 @@ import {
 } from 'lucide-react';
 import { UserProfile, Skill, ExperienceLevel, AvailabilityStatus } from '../types';
 import { StatusDot } from './StatusDot';
-import { parseResumeFile } from '../utils/resumeParser';
 import { CompletenessBar } from './CompletenessBar';
 
 interface OnboardingModalProps {
@@ -34,10 +30,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   isInitialOnboarding = false,
 }) => {
   if (!isOpen) return null;
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isParsing, setIsParsing] = useState(false);
-  const [parseSuccessMsg, setParseSuccessMsg] = useState('');
 
   // Editable Form State
   const [name, setName] = useState(currentUser.name);
@@ -58,41 +50,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
   const [interests, setInterests] = useState<string[]>(currentUser.interests);
   const [newInterestInput, setNewInterestInput] = useState('');
-  const [resumeFileName, setResumeFileName] = useState(currentUser.resumeFileName || '');
-
-  // Handle Resume File Upload & Parsing
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsParsing(true);
-    setParseSuccessMsg('');
-
-    try {
-      const parsed = await parseResumeFile(file);
-      
-      // Auto populate fields
-      if (parsed.name) setName(parsed.name);
-      if (parsed.headline) setHeadline(parsed.headline);
-      if (parsed.bio) setBio(parsed.bio);
-      if (parsed.location) setLocation(parsed.location);
-      if (parsed.primaryRole) setPrimaryRole(parsed.primaryRole);
-      if (parsed.experienceLevel) setExperienceLevel(parsed.experienceLevel);
-      if (parsed.skills && parsed.skills.length > 0) setSkills(parsed.skills);
-      if (parsed.interests && parsed.interests.length > 0) setInterests(parsed.interests);
-      if (parsed.linkedinUrl) setLinkedinUrl(parsed.linkedinUrl);
-      if (parsed.githubUrl) setGithubUrl(parsed.githubUrl);
-      if (parsed.portfolioUrl) setPortfolioUrl(parsed.portfolioUrl);
-      if (parsed.hoursPerWeek) setHoursPerWeek(parsed.hoursPerWeek);
-      setResumeFileName(parsed.fileName);
-
-      setParseSuccessMsg(`Parsed "${parsed.fileName}" (${parsed.source === 'gemini-ai' ? 'Gemini 3.7 Flash AI' : 'Smart Heuristics'}) successfully! ${parsed.skills?.length || 0} skills extracted.`);
-    } catch {
-      setParseSuccessMsg('Could not parse automatically, but you can configure skills manually.');
-    } finally {
-      setIsParsing(false);
-    }
-  };
 
   const handleAddSkill = () => {
     if (!newSkillName.trim()) return;
@@ -146,8 +103,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       portfolioUrl,
       skills,
       interests,
-      resumeParsed: Boolean(resumeFileName),
-      resumeFileName,
     };
 
     onSaveProfile(updatedUser);
@@ -200,45 +155,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           
           {/* Completeness Bar */}
           <CompletenessBar user={tempUser} />
-
-          {/* Resume Upload Dropzone */}
-          <div className="p-6 rounded-2xl bg-white/5 border border-dashed border-[#14b8a6]/40 hover:border-[#14b8a6] transition-colors text-center">
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept=".pdf,.docx,.txt"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            
-            <div className="w-10 h-10 rounded-full bg-[#14b8a6]/10 border border-[#14b8a6]/20 flex items-center justify-center text-[#14b8a6] mx-auto mb-2.5">
-              <UploadCloud className="w-5 h-5" />
-            </div>
-
-            <div className="font-display font-bold text-sm text-white">
-              {isParsing ? 'Parsing Resume Intelligence...' : 'Upload Resume (Optional PDF / DOCX)'}
-            </div>
-            <p className="text-[11px] text-white/40 mt-1 max-w-sm mx-auto">
-              Extracts your skills, experience tier, and past work automatically. You can edit any field before saving.
-            </p>
-
-            <button
-              type="button"
-              disabled={isParsing}
-              onClick={() => fileInputRef.current?.click()}
-              className="mt-3.5 px-5 py-2 rounded-full bg-gradient-to-r from-[#6366f1] to-[#14b8a6] hover:brightness-110 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>{resumeFileName ? `Re-upload (${resumeFileName})` : 'Choose File to Parse'}</span>
-            </button>
-
-            {parseSuccessMsg && (
-              <div className="mt-2 text-xs text-[#14b8a6] font-semibold flex items-center justify-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{parseSuccessMsg}</span>
-              </div>
-            )}
-          </div>
 
           {/* Basic Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

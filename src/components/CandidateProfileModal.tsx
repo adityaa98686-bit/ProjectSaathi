@@ -131,11 +131,6 @@ export const CandidateProfileModal: React.FC<CandidateProfileModalProps> = ({
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-white/30" /> {candidate.joinedDate}
                 </span>
-                {candidate.resumeParsed && candidate.resumeFileName && (
-                  <span className="flex items-center gap-1 text-white/70 bg-white/5 px-2.5 py-0.5 rounded-full border border-white/10">
-                    📄 {candidate.resumeFileName}
-                  </span>
-                )}
               </div>
 
               <p className="text-xs sm:text-sm text-white/70 mt-4 leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/5">

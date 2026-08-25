@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
-import { calculateProfileCompleteness } from '../utils/resumeParser';
+import { calculateProfileCompleteness } from '../utils/profileUtils';
 import { UserProfile } from '../types';
 
 interface CompletenessBarProps {

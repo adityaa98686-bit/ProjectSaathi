@@ -48,8 +48,6 @@ export interface UserProfile {
   skills: Skill[];
   interests: string[];
   pastProjects: PastProject[];
-  resumeParsed?: boolean;
-  resumeFileName?: string;
   joinedDate: string;
 }
 
