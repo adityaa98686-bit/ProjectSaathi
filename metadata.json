@@ -1,0 +1,6 @@
+{
+  "name": "ProjectSaathi",
+  "description": "Form project teams for hackathons, startups, and research with intelligent compatibility matching, skill gap radar, and resume parsing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

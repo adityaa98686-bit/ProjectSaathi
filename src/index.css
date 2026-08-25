@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #08080A;
+    color: #E2E8F0;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+/* ========================================================================= */
+/* BRIGHT MODE THEME STYLING OVERRIDES                                       */
+/* Crisp, high-contrast, modern clean look with sophisticated slate & teal   */
+/* ========================================================================= */
+html.bright-theme,
+[data-theme="bright"] {
+  color-scheme: light;
+}
+
+html.bright-theme body,
+[data-theme="bright"] body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* Background overrides in Bright Mode */
+html.bright-theme .bg-\[\#08080A\],
+[data-theme="bright"] .bg-\[\#08080A\] {
+  background-color: #F8FAFC !important;
+}
+
+html.bright-theme .bg-\[\#0C0C12\],
+[data-theme="bright"] .bg-\[\#0C0C12\] {
+  background-color: #FFFFFF !important;
+}
+
+html.bright-theme .bg-\[\#0C0C12\]\/95,
+[data-theme="bright"] .bg-\[\#0C0C12\]\/95 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+html.bright-theme .bg-\[\#08080A\]\/80,
+[data-theme="bright"] .bg-\[\#08080A\]\/80 {
+  background-color: rgba(248, 250, 252, 0.88) !important;
+}
+
+html.bright-theme .bg-\[\#12121A\],
+[data-theme="bright"] .bg-\[\#12121A\] {
+  background-color: #FFFFFF !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+}
+
+html.bright-theme .bg-\[\#161622\],
+[data-theme="bright"] .bg-\[\#161622\] {
+  background-color: #F1F5F9 !important;
+}
+
+/* Subtle surfaces and overlays */
+html.bright-theme .bg-white\/5,
+[data-theme="bright"] .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+}
+
+html.bright-theme .bg-white\/10,
+[data-theme="bright"] .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+html.bright-theme .bg-white\/\[0\.04\],
+[data-theme="bright"] .bg-white\/\[0\.04\] {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+html.bright-theme .bg-white\/\[0\.06\],
+[data-theme="bright"] .bg-white\/\[0\.06\] {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+html.bright-theme .bg-black\/40,
+html.bright-theme .bg-black\/60,
+html.bright-theme .bg-black\/80,
+[data-theme="bright"] .bg-black\/40,
+[data-theme="bright"] .bg-black\/60 {
+  background-color: #F1F5F9 !important;
+}
+
+/* Borders in Bright Mode */
+html.bright-theme .border-white\/5,
+html.bright-theme .border-white\/10,
+html.bright-theme .border-white\/15,
+html.bright-theme .border-white\/\[0\.08\],
+html.bright-theme .border-white\/\[0\.06\],
+[data-theme="bright"] .border-white\/5,
+[data-theme="bright"] .border-white\/10,
+[data-theme="bright"] .border-white\/15,
+[data-theme="bright"] .border-white\/\[0\.08\],
+[data-theme="bright"] .border-white\/\[0\.06\] {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.bright-theme .border-white\/20,
+[data-theme="bright"] .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.14) !important;
+}
+
+/* Typography in Bright Mode */
+html.bright-theme .text-white,
+[data-theme="bright"] .text-white {
+  color: #0F172A !important;
+}
+
+html.bright-theme .text-white\/90,
+html.bright-theme .text-white\/80,
+[data-theme="bright"] .text-white\/90,
+[data-theme="bright"] .text-white\/80 {
+  color: #1E293B !important;
+}
+
+html.bright-theme .text-white\/70,
+[data-theme="bright"] .text-white\/70 {
+  color: #334155 !important;
+}
+
+html.bright-theme .text-white\/60,
+html.bright-theme .text-white\/50,
+[data-theme="bright"] .text-white\/60,
+[data-theme="bright"] .text-white\/50 {
+  color: #64748B !important;
+}
+
+html.bright-theme .text-white\/40,
+html.bright-theme .text-white\/30,
+[data-theme="bright"] .text-white\/40,
+[data-theme="bright"] .text-white\/30 {
+  color: #94A3B8 !important;
+}
+
+/* Inputs & Form controls in Bright Mode */
+html.bright-theme input,
+html.bright-theme textarea,
+html.bright-theme select,
+[data-theme="bright"] input,
+[data-theme="bright"] textarea,
+[data-theme="bright"] select {
+  color: #0F172A !important;
+}
+
+html.bright-theme input::placeholder,
+html.bright-theme textarea::placeholder,
+[data-theme="bright"] input::placeholder,
+[data-theme="bright"] textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Bright Scrollbars */
+html.bright-theme ::-webkit-scrollbar-track,
+[data-theme="bright"] ::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+html.bright-theme ::-webkit-scrollbar-thumb,
+[data-theme="bright"] ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08080A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A1A22;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2D2D3A;
+}
+
+/* Immersive UI Glow and Gradient Utilities */
+.glow-accent {
+  box-shadow: 0 0 25px -5px rgba(20, 184, 166, 0.25);
+}
+
+.glow-accent-strong {
+  box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.3), 0 0 20px -5px rgba(20, 184, 166, 0.25);
+}
+
+.glow-subtle {
+  box-shadow: 0 0 20px -2px rgba(255, 255, 255, 0.03);
+}
+
